@@ -41,7 +41,7 @@ VITE_PBX_STATION_IP=${settings["pbx_station_ip"]}
 VITE_PBX_STATION_PORT=${settings["pbx_station_port"]}
 VITE_PBX_ENDPOINT=${settings["pbx_endpoint"]}
 VITE_PBX_PASSWORD=${settings["pbx_password"]}
-VITE_BACKEND_HOST=http://${settings["workstation_host"]}:5000
+VITE_BACKEND_HOST=https://${settings["workstation_host"]}:5000
 VITE_CONFCAM_BACKEND_HOST=http://${settings["workstation_host"]}:8787
 EOF
 }
@@ -64,7 +64,7 @@ do
 
     cd ${settings["workstation_deploy_dir"]}/$app
 
-    echo -e "{GREEN}Stopping existing $app app{NOCOLOR}"
+    echo -e "${GREEN}Stopping existing $app app${NOCOLOR}"
     newgrp docker <<EOF
 docker compose down -v
 EOF
@@ -88,7 +88,7 @@ EOF
         break
     fi
 
-    echo -e "{GREEN}Running the $app app{NOCOLOR}"
+    echo -e "${GREEN}Running the $app app${NOCOLOR}"
     newgrp docker <<EOF
 docker compose up -d
 EOF
