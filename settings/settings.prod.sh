@@ -20,3 +20,16 @@ settings["pbx_station_ip"]=192.168.200.10
 settings["pbx_station_port"]=8089
 settings["pbx_endpoint"]=100
 settings["pbx_password"]=LzJxci8yWnV4Z1k9
+
+# Repository clone settings
+
+# If debug is 0, then repositories will be cloned completely, from the latest
+# commit. Else only one commit pinned to provided in the release setting tag
+# will be cloned.
+settings["debug"]=0
+
+settings["release"]=v0.0.1-alpha
+
+settings["smartcab-hub"]=${settings["release"]}
+settings["smartcab-bot"]=${settings["release"]}
+settings["conference-camera"]=${settings["release"]}

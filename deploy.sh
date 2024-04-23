@@ -38,7 +38,7 @@ do
     deploy_dir=${settings[${machine}_deploy_dir]}
     deploy_tools_dir=${settings[${machine}_deploy_dir]}/.deploy_tools
 
-    echo -e "${GREEN}Running $machine (${user}@${host}) setup${NOCOLOR}"
+    echo -e "\n${GREEN}Running $machine (${user}@${host}) setup${NOCOLOR}"
 
     export password
     sshpass -epassword ssh -p $port ${user}@${host} "echo $password | sudo -S rm -rf ${deploy_dir} && mkdir -p ${deploy_tools_dir}"

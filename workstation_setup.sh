@@ -56,9 +56,18 @@ export COMPOSE_PARALLEL_LIMIT=1
 
 for app in "${apps[@]}"
 do
-    git clone https://github.com/smart-cab/${app}.git ${settings["workstation_deploy_dir"]}/${app}
+    if [ ${settings["debug"]} -eq 1 ]; then
+        git clone https://github.com/smart-cab/${app}.git ${settings["workstation_deploy_dir"]}/${app}
+    else
+        git clone --depth=1 --branch ${settings[${app}]} https://github.com/smart-cab/${app}.git ${settings["workstation_deploy_dir"]}/${app}
+    fi
 
     cd ${settings["workstation_deploy_dir"]}/$app
+
+    echo -e "{GREEN}Stopping existing $app app{NOCOLOR}"
+    newgrp docker <<EOF
+docker compose down -v
+EOF
 
     if [ $app = "smartcab-hub" ]; then
         apply_hub_settings
@@ -79,6 +88,7 @@ EOF
         break
     fi
 
+    echo -e "{GREEN}Running the $app app{NOCOLOR}"
     newgrp docker <<EOF
 docker compose up -d
 EOF
