@@ -13,19 +13,21 @@ fi
 source $settings_file
 source $secrets_file
 
-sudo apt-get update
-sudo apt-get install --no-install-recommends xserver-xorg xinit x11-xserver-utils -y
-sudo apt-get install matchbox-window-manager xautomation unclutter fonts-noto-color-emoji -y
+password=${settings[hub_ssh_password]}
+
+echo $password | sudo -SE apt-get update
+echo $password | sudo -SE apt-get install --no-install-recommends xserver-xorg xinit x11-xserver-utils -y
+echo $password | sudo -SE apt-get install matchbox-window-manager xautomation unclutter fonts-noto-color-emoji -y
 
 chromium_package=chromium-browser
-sudo apt-get install $chromium_package
+echo $password | sudo -SE apt-get install $chromium_package
 chromium_installation_status=$?
 if [ $chromium_installation_status -ne 0 ]; then
     chromium_package=chromium
-    sudo apt-get install $chromium_package
+echo $password | sudo -SE apt-get install $chromium_package
 fi
 
-cat >$HOME/kiosk <<EOL
+cat >$HOME/kiosk <<EOF
 #/bin/sh
 xset -dpms     # disable DPMS (Energy Star) features.
 xset s off     # disable screen saver
@@ -33,12 +35,19 @@ xset s noblank # don't blank the video device
 matchbox-window-manager -use_titlebar no &
 unclutter &    # hide X mouse cursor unless mouse activated
 $chromium_package --display=:0 --kiosk --incognito --window-position=0,0 --disable-features=WebRtcHideLocalIpsWithMdns https://${settings["workstation_host"]}:3000/
-EOL
+EOF
 
-line='if [ -z "$DISPLAY" -a $(tty) = /dev/tty1 ]; then xinit $HOME/kiosk -- vt$(fgconsole); fi'
-grep -qxF "$line" .bashrc || echo "$line" >> .bashrc # append above line to .bashrc only if doesn't exist
+target=$HOME/.bashrc
+while IFS= read -r line ; do
+    if ! grep -Fqxe "$line" "$target" ; then
+        printf "%s\n" "$line" >> "$target"
+    fi
+done <<EOF
+if [ -z "\$DISPLAY" -a \$(tty) = /dev/tty1 ]; then xinit ${settings[hub_ssh_user]}/kiosk -- vt\$(fgconsole); fi
+EOF
+tail -n 5 $HOME/.bashrc
 
-sudo raspi-config nonint do_overscan_kms 1 1
-sudo raspi-config nonint do_boot_behaviour B2
+echo $password | sudo -SE raspi-config nonint do_overscan_kms 1 1
+echo $password | sudo -SE raspi-config nonint do_boot_behaviour B2
 
-sudo shutdown --reboot now
+echo $password | sudo -SE shutdown --reboot now

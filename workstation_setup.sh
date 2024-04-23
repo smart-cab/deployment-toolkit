@@ -20,6 +20,8 @@ fi
 source $settings_file
 source $secrets_file
 
+password=${settings["workstation_ssh_password"]}
+
 command_exists() {
 	command -v "$@" > /dev/null 2>&1
 }
@@ -28,19 +30,20 @@ command_exists() {
 if ! command_exists docker; then
     curl -fsSL https://get.docker.com | sh
 fi
-sudo usermod -aG docker $USER
+echo $password | sudo -SE usermod -aG docker $USER
 
 apply_pbx_settings() {
-    cat >${settings["deploy_dir"]}/smartcab-hub/frontend/.env <<EOF
+    cat >${settings["workstation_deploy_dir"]}/smartcab-hub/frontend/.env <<EOF
 VITE_PBX_STATION_IP=${PBX_STATION_IP}
 VITE_PBX_STATION_PORT=${PBX_STATION_PORT}
 VITE_PBX_ENDPOINT=${PBX_ENDPOINT}
 VITE_PBX_PASSWORD=${PBX_PASSWORD}
+VITE_BACKEND_HOST=http://${WORKSTATION_HOST}:5000
 EOF
 }
 
 apply_bot_settings() {
-    cat >${settings["deploy_dir"]}/smartcab-bot/.env <<EOF
+    cat >${settings["workstation_deploy_dir"]}/smartcab-bot/.env <<EOF
 TELEGRAM_BOT_TOKEN=${settings["telegram_token"]}
 EOF
 }
@@ -49,9 +52,9 @@ export COMPOSE_PARALLEL_LIMIT=1
 
 for app in "${apps[@]}"
 do
-    git clone https://github.com/smart-cab/${app}.git ${settings["deploy_dir"]}/${app}
+    git clone https://github.com/smart-cab/${app}.git ${settings["workstation_deploy_dir"]}/${app}
 
-    cd ${settings["deploy_dir"]}/$app
+    cd ${settings["workstation_deploy_dir"]}/$app
 
     if [ $app = "smartcab-hub" ]; then
         apply_pbx_settings
@@ -59,16 +62,16 @@ do
         apply_bot_settings
     fi
 
-    echo "--- Start building of the $app app ---"
+    echo "Start building of the $app app"
     newgrp docker <<EOF
 docker compose build
 EOF
 
     build_status=$?
     if [ $build_status -eq 0 ]; then
-        echo -e "--- ${GREEN}App $app was built successfully${NOCOLOR} ---"
+        echo -e "${GREEN}App $app was built successfully${NOCOLOR}"
     else
-        echo -e "--- ${RED}Failed to build $app app${NOCOLOR} ---"
+        echo -e "${RED}Failed to build $app app${NOCOLOR}"
         break
     fi
 

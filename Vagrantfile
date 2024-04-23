@@ -16,6 +16,8 @@ Vagrant.configure("2") do |config|
   config.vm.define "workstation" do |workstation|
     workstation.vm.box = "hashicorp/bionic64"
 
+    workstation.vm.network "public_network", ip: "192.168.200.1"
+
     workstation.vm.network "forwarded_port", id: "ssh", host: 2201, guest: 22
     workstation.vm.network "forwarded_port", id: "redis", host: 6379, guest: 6379
     workstation.vm.network "forwarded_port", id: "hub-frontend", host: 3000, guest: 3000
@@ -28,6 +30,8 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "hub" do |hub|
     hub.vm.box = "PersistentCoder/raspberry-pi-desktop-32bit"
+
+    hub.vm.network "public_network", ip: "192.168.200.2"
 
     hub.vm.network "forwarded_port", id: "ssh", host: 2202, guest: 22
 
