@@ -79,3 +79,5 @@ EOF
 docker compose up -d
 EOF
 done
+
+echo -e "${GREEN}Done!${NOCOLOR}"
