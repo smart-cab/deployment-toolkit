@@ -32,13 +32,17 @@ if ! command_exists docker; then
 fi
 echo $password | sudo -SE usermod -aG docker $USER
 
-apply_pbx_settings() {
+apply_hub_settings() {
+     cat >${settings["workstation_deploy_dir"]}/smartcab-hub/.env <<EOF
+ZIGBEE_ADAPTER=/dev/ttyACM0
+EOF
     cat >${settings["workstation_deploy_dir"]}/smartcab-hub/frontend/.env <<EOF
-VITE_PBX_STATION_IP=${PBX_STATION_IP}
-VITE_PBX_STATION_PORT=${PBX_STATION_PORT}
-VITE_PBX_ENDPOINT=${PBX_ENDPOINT}
-VITE_PBX_PASSWORD=${PBX_PASSWORD}
-VITE_BACKEND_HOST=http://${WORKSTATION_HOST}:5000
+VITE_PBX_STATION_IP=${settings["pbx_station_ip"]}
+VITE_PBX_STATION_PORT=${settings["pbx_station_port"]}
+VITE_PBX_ENDPOINT=${settings["pbx_endpoint"]}
+VITE_PBX_PASSWORD=${settings["pbx_password"]}
+VITE_BACKEND_HOST=http://${settings["workstation_host"]}:5000
+VITE_CONFCAM_BACKEND_HOST=http://${settings["workstation_host"]}:8787
 EOF
 }
 
@@ -57,7 +61,7 @@ do
     cd ${settings["workstation_deploy_dir"]}/$app
 
     if [ $app = "smartcab-hub" ]; then
-        apply_pbx_settings
+        apply_hub_settings
     elif [ $app = "smartcab-bot" ]; then
         apply_bot_settings
     fi
@@ -79,5 +83,3 @@ EOF
 docker compose up -d
 EOF
 done
-
-echo -e "${GREEN}Done!${NOCOLOR}"

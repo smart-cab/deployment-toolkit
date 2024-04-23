@@ -35,16 +35,20 @@ do
     user=${settings[${machine}_ssh_user]}
     password=${settings[${machine}_ssh_password]}
     setup_file=${machine}_setup.sh
+    deploy_dir=${settings[${machine}_deploy_dir]}
     deploy_tools_dir=${settings[${machine}_deploy_dir]}/.deploy_tools
 
     echo -e "${GREEN}Running $machine (${user}@${host}) setup${NOCOLOR}"
 
     export password
-    sshpass -epassword ssh -p $port ${user}@${host} "mkdir -p ${deploy_tools_dir}"
+    sshpass -epassword ssh -p $port ${user}@${host} "echo $password | sudo -S rm -rf ${deploy_dir} && mkdir -p ${deploy_tools_dir}"
     sshpass -epassword scp -P $port -r $setup_file settings ${user}@${host}:${deploy_tools_dir}/
     sshpass -epassword ssh -p $port ${user}@${host} "bash -s <<EOF
 cd ${deploy_tools_dir}
 ./${setup_file} ${settings_file}
+echo $password | sudo -S rm -rf ${deploy_tools_dir}
 EOF"
     unset password
 done
+
+echo -e "${GREEN}Done!${NOCOLOR}"

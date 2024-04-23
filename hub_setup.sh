@@ -34,7 +34,7 @@ xset s off     # disable screen saver
 xset s noblank # don't blank the video device
 matchbox-window-manager -use_titlebar no &
 unclutter &    # hide X mouse cursor unless mouse activated
-$chromium_package --display=:0 --kiosk --incognito --window-position=0,0 --disable-features=WebRtcHideLocalIpsWithMdns https://${settings["workstation_host"]}:3000/
+$chromium_package --display=:0 --kiosk --incognito --window-position=0,0 --disable-features=WebRtcHideLocalIpsWithMdns http://${settings["workstation_host"]}:3000/
 EOF
 
 target=$HOME/.bashrc
@@ -43,7 +43,7 @@ while IFS= read -r line ; do
         printf "%s\n" "$line" >> "$target"
     fi
 done <<EOF
-if [ -z "\$DISPLAY" -a \$(tty) = /dev/tty1 ]; then xinit ${settings[hub_ssh_user]}/kiosk -- vt\$(fgconsole); fi
+if [ -z "\$DISPLAY" -a \$(tty) = /dev/tty1 ]; then xinit /home/${settings[hub_ssh_user]}/kiosk -- vt\$(fgconsole); fi
 EOF
 tail -n 5 $HOME/.bashrc
 
