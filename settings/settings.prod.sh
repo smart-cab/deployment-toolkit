@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# НЕ ЗАБУДЬ ПОСТАВИТЬ ip НОУТА В devmap.yaml ПОД pc1 !!!!
+
 declare -A settings
 
 # Connection settings
