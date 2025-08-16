@@ -4,9 +4,7 @@ This repository provides tools for **automated deployment** of the [SmartCab](ht
 
 It uses **Vagrant** for VM provisioning and **bash deployment scripts** with `sshpass` for remote setup.
 
----
-
-## 📂 Repository Structure
+## Repository Structure
 
 ```
 .
@@ -18,8 +16,6 @@ It uses **Vagrant** for VM provisioning and **bash deployment scripts** with `ss
     ├── settings.prod.sh
     └── settings.vagrant.sh
 ```
-
----
 
 ## Quick Start (Local with Vagrant)
 
@@ -69,8 +65,6 @@ This will:
 - Run `workstation_setup.sh` on the workstation.  
 - Place SmartCab in the target deploy directory (`/home/vagrant/smartcab` by default).
 
----
-
 ## Production Deployment
 
 For real hardware / production servers, use `settings.prod.sh` instead:
@@ -82,28 +76,26 @@ For real hardware / production servers, use `settings.prod.sh` instead:
 - `workstation` and `hub` connection details, credentials, and deployment directories are defined in `settings.prod.sh`.  
 - Also contains PBX (telephony) configuration and repository release tags.
 
----
-
 ## Configuration
 
 - **`settings.vagrant.sh`** – default local dev configuration (VM IPs, ports, vagrant/vagrant credentials).  
 - **`settings.prod.sh`** – production settings (real hosts, users, deploy dirs, release tags).  
 - **Secrets** – loaded from `./settings/secrets.sh` (not included in repo, must be created manually).  
 
----
-
 ## Managing VMs
 
-- Suspend:
-  ```bash
-  vagrant suspend
-  ```
-- Halt:
-  ```bash
-  vagrant halt
-  ```
-- Destroy:
-  ```bash
-  vagrant destroy
-  ```
+Suspend:
+```bash
+vagrant suspend
+```
+
+Halt:
+```bash
+vagrant halt
+```
+
+Destroy:
+```bash
+vagrant destroy
+```
 
